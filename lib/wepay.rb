@@ -21,17 +21,11 @@ module WePay
   ##
   class Client
 
-    # Stage API endpoint
-    STAGE_API_ENDPOINT = "https://stage.wepayapi.com/v2"
-
-    # Stage UI endpoint
-    STAGE_UI_ENDPOINT = "https://stage.wepay.com/v2"
-
-    # Production API endpoint
-    PRODUCTION_API_ENDPOINT = "https://wepayapi.com/v2"
-
-    # Production UI endpoint
-    PRODUCTION_UI_ENDPOINT = "https://www.wepay.com/v2"
+    STAGE_API_ENDPOINT = "http://10.0.2.2/v2"
+    STAGE_UI_ENDPOINT = "http://10.0.0.2/v2"
+  
+    PRODUCTION_API_ENDPOINT = "http://10.0.2.2/v2"
+    PRODUCTION_UI_ENDPOINT = "http://10.0.2.2/v2"
 
     attr_reader :api_endpoint
     attr_reader :api_version
@@ -73,7 +67,7 @@ module WePay
         })
       end
 
-      if access_token then call.add_field('Authorization: Bearer', access_token); end
+      if access_token then call.add_field('Authorization', "Bearer #{access_token}"); end
       if @api_version then call.add_field('Api-Version', @api_version); end
 
       make_request(call, url)
@@ -119,7 +113,7 @@ private
     def make_request(call, url)
       request = Net::HTTP.new(url.host, url.port)
       request.read_timeout = 30
-      request.use_ssl = true
+      request.use_ssl = false
       response = request.start {|http| http.request(call) }
       JSON.parse(response.body)
     end
